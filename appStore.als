@@ -29,7 +29,7 @@ fact appStore {
   --Todo usuario que tem uma conta precisa pertencer a AppStore.
   Conta.~conta in AppStore.usuarios
 
-  --
+  --Se o usuario esta na AppStore, implica dizer que ele tem uma conta.
   all u:Usuario | (u in AppStore.usuarios) => (one u.conta)
 }
 
@@ -47,11 +47,6 @@ fact {
   --O conjunto dos aplicativos de uma conta é igual ao conjunto dos aplicativos
   --dos dispositivos da mesma conta.
   all c:Conta | c.aplicativosConta = c.dispositivos.aplicativosInstalados
-}
-
-assert appStoreUsuario {
-  --Se o usuario esta na AppStore, implica dizer que ele tem uma conta.
-  all u:Usuario | (u in AppStore.usuarios) => (one u.conta)
 }
 
 assert usuarioConta {
@@ -72,7 +67,6 @@ assert contaDispositivo {
 
 check usuarioConta for 10
 check contaDispositivo for 10
-check appStoreUsuario for 10
 
 pred show[] {}
 run show for 5
