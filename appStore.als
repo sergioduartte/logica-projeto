@@ -32,10 +32,10 @@ assert usuarioConta {
 }
 
 assert contaDispositivo {
-  -- Toda conta tem que ter pelo menos um dispositivo.
+  --Toda conta tem que ter pelo menos um dispositivo.
   all c:Conta | some c.dispositivos
 
-  -- Todo dispositivo so pode pertencer a uma conta.
+  --Todo dispositivo so pode pertencer a uma conta.
   all d:Dispositivo | one d.~dispositivos
 }
 
