@@ -1,5 +1,10 @@
 module appStore
 
+sig AppStore {
+    usuarios: set Usuario,
+    aplicativos: set Aplicativo
+}
+
 sig Usuario {
   conta: one Conta
 }
@@ -9,9 +14,16 @@ sig Conta {
   aplicativosConta: set Aplicativo
 }
 
-sig Dispositivo {}
+sig Dispositivo {
+  aplicativosInstalados: set Aplicativo
+}
 
 sig Aplicativo {}
+
+fact {
+  --Garantir que so exista uma AppStore.
+  one AppStore
+}
 
 fact {
   --Toda conta so pode pertencer a um usuario.
@@ -21,6 +33,12 @@ fact {
 fact {
   --Todo dispositivo so pode pertencer a uma conta ao mesmo tempo.
   all d:Dispositivo | one d.~dispositivos
+}
+
+fact {
+  --O conjunto dos aplicativos de uma conta é igual ao conjunto dos aplicativos
+  --dos dispositivos da mesma conta.
+  all c:Conta | c.aplicativosConta = c.dispositivos.aplicativosInstalados
 }
 
 assert usuarioConta {
@@ -43,4 +61,4 @@ check usuarioConta for 10
 check contaDispositivo for 10
 
 pred show[] {}
-run show for 5
+run show for 10
