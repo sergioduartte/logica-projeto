@@ -15,12 +15,16 @@ sig Conta {
 }
 
 sig Dispositivo {
-  aplicativosInstalados: set Aplicativo
+  versoesDeAplicativosInstalados: set Versao
 }
 
-abstract sig Aplicativo {}
+abstract sig Aplicativo {
+  versoes: some Versao
+}
 sig AplicativoPago extends Aplicativo {}
 sig AplicativoGratuito extends Aplicativo {}
+
+sig Versao {}
 
 
 
@@ -35,20 +39,25 @@ fact appStore {
   all u:Usuario | (u in AppStore.usuarios) => (one u.conta)
 }
 
-fact {
+fact usuarioConta {
   --Toda conta so pode pertencer a um usuario.
   all c:Conta | one c.~conta
 }
 
-fact {
+fact contaDispositivo {
   --Todo dispositivo so pode pertencer a uma conta ao mesmo tempo.
   all d:Dispositivo | one d.~dispositivos
 }
 
-fact {
+fact aplicativoVersao {
+  --Cada versao so pode pertencer a um aplicativo.
+  all v:Versao | one v.~versoes
+}
+
+fact contaDispositivoVersoes {
   --O conjunto dos aplicativos de uma conta é igual ao conjunto dos aplicativos
   --dos dispositivos da mesma conta.
-  all c:Conta | c.aplicativosConta = c.dispositivos.aplicativosInstalados
+  all c:Conta | c.aplicativosConta = c.dispositivos.versoesDeAplicativosInstalados.~versoes
 }
 
 
@@ -73,4 +82,4 @@ check usuarioConta for 10
 check contaDispositivo for 10
 
 pred show[] {}
-run show for 5
+run show for 2
