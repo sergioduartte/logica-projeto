@@ -22,6 +22,8 @@ abstract sig Aplicativo {}
 sig AplicativoPago extends Aplicativo {}
 sig AplicativoGratuito extends Aplicativo {}
 
+
+
 fact appStore {
   --Garantir que so exista uma AppStore.
   one AppStore
@@ -48,6 +50,8 @@ fact {
   --dos dispositivos da mesma conta.
   all c:Conta | c.aplicativosConta = c.dispositivos.aplicativosInstalados
 }
+
+
 
 assert usuarioConta {
   --Todo usuario so pode ter uma conta.
