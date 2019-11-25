@@ -6,7 +6,7 @@ sig AppStore {
 }
 
 sig Usuario {
-  conta: one Conta
+  conta: lone Conta
 }
 
 sig Conta {
@@ -20,9 +20,15 @@ sig Dispositivo {
 
 sig Aplicativo {}
 
-fact {
+fact appStore {
   --Garantir que so exista uma AppStore.
   one AppStore
+
+  --Todo usuario que tem uma conta precisa pertencer a AppStore.
+  Conta.~conta in AppStore.usuarios
+
+  --
+  all u:Usuario | (u in AppStore.usuarios) => (one u.conta)
 }
 
 fact {
@@ -41,9 +47,14 @@ fact {
   all c:Conta | c.aplicativosConta = c.dispositivos.aplicativosInstalados
 }
 
+assert appStoreUsuario {
+  --Se o usuario esta na AppStore, implica dizer que ele tem uma conta.
+  all u:Usuario | (u in AppStore.usuarios) => (one u.conta)
+}
+
 assert usuarioConta {
   --Todo usuario so pode ter uma conta.
-  all u:Usuario | one u.conta
+  all u:Usuario | lone u.conta
 
   --Toda conta so pode pertencer a um usuario.
   all c:Conta | one c.~conta
@@ -59,6 +70,7 @@ assert contaDispositivo {
 
 check usuarioConta for 10
 check contaDispositivo for 10
+check appStoreUsuario for 10
 
 pred show[] {}
-run show for 10
+run show for 5
