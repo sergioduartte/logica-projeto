@@ -11,14 +11,14 @@ sig Conta {
 sig Aplicativo {}
 
 fact {
-  -- Toda conta so pode pertencer a um usuario.
+  --Toda conta so pode pertencer a um usuario.
   all c:Conta | one c.~conta
 }
 
 assert usuarioConta {
-  -- Todo usuario so pode ter uma conta.
+  --Todo usuario so pode ter uma conta.
   all u:Usuario | one u.conta
-  -- Toda conta so pode pertencer a um usuario.
+  --Toda conta so pode pertencer a um usuario.
   all c:Conta | one c.~conta
 }
 
