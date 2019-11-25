@@ -18,6 +18,7 @@ fact {
 assert usuarioConta {
   --Todo usuario so pode ter uma conta.
   all u:Usuario | one u.conta
+
   --Toda conta so pode pertencer a um usuario.
   all c:Conta | one c.~conta
 }
