@@ -18,7 +18,9 @@ sig Dispositivo {
   aplicativosInstalados: set Aplicativo
 }
 
-sig Aplicativo {}
+abstract sig Aplicativo {}
+sig AplicativoPago extends Aplicativo {}
+sig AplicativoGratuito extends Aplicativo {}
 
 fact appStore {
   --Garantir que so exista uma AppStore.
