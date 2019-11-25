@@ -45,7 +45,7 @@ fact usuarioConta {
 }
 
 fact contaDispositivo {
-  --Todo dispositivo so pode pertencer a uma conta ao mesmo tempo.
+  --Todo dispositivo tem que pertencer a exatamente uma conta.
   all d:Dispositivo | one d.~dispositivos
 }
 
