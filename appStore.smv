@@ -1,24 +1,66 @@
--- main: AppStore FSM
 MODULE main
-VAR
-  aplicativos : process aplicativoFSM;
-  contas : process contaFSM;
+  VAR
+    conta : process Conta;
 
-MODULE contaFSM
-VAR
-  containsCreditoSuficiente : {True, False};
-  aplicativos : process aplicativoFSM;
-  dispositivos : process dispositivoFSM;
-ASSIGN
-  init(containsCreditoSuficiente) := True;
+MODULE Conta
+  VAR
+    containsCreditos : {True, False};
+    applicativo : process Aplicativo(containsCreditos);
+    dispositivo : process Dispositivo(aplicativo);
 
-MODULE aplicativoFSM
-VAR
-  versao : {v0, v1, v2};
-  isGratuito : {True, False};
-ASSIGN
+  ASSIGN
+    init(cointainsCreditos) := {True};
 
-MODULE dispositivoFSM
+
+MODULE Aplicativo(containsCreditos)
+  VAR
+    instalado : {True, False};
+    isPago : {True, False};
+
+  ASSIGN
+    init(instalado) := {False};
+    init(isPago) := {False};
+
+    next(instalado) :=
+      case
+        (isPago = True & cointainsCredito = True): {True}; 
+        (isPago = True & cointainsCredito = False}: {False}; 
+        (isPago = False & cointainsCredito = True}: {True}; 
+        (isPago = False & cointainsCredito = False}: {True}; 
+        TRUE: {False};
+      esac;
+
+MODULE Dispositivo(aplicativo)
+  VAR
+    isAtualizado : {True, False};
+    instalarAplicativo: process instalarAplicativo(appsInstalados);
+    desinstalarAplicativo: process desinstalarAplicativo(appsInstalados);
+  ASSIGN
+    init(isAtualizado) := False;
+
+MODULE atualizarAplicativo(isAtualizado)
 VAR
-  appsVersoesInstaladas : process aplicativoFSM;
 ASSIGN
+	next(isAtualizado) :=
+	case
+		isAtualizado = False: True;
+		TRUE: isAtualizado;
+	esac;
+
+MODULE instalarAplicativo(qtdApps)
+VAR
+ASSIGN
+	next(qtdApps) :=
+	case
+		qtdApps < 10: qtdApps + 1;
+		TRUE: qtdApps;
+	esac;
+
+MODULE desinstalarAplicativo(qtdApps)
+VAR
+ASSIGN
+	next(qtdApps) :=
+	case
+		qtdApps > 0: qtdApps - 1;
+		TRUE: qtdApps;
+	esac;
