@@ -55,9 +55,10 @@ fact aplicativoVersao {
 }
 
 fact contaDispositivoVersoes {
-  --O conjunto dos aplicativos de uma conta é igual ao conjunto dos aplicativos
-  --dos dispositivos da mesma conta.
-  all c:Conta | c.aplicativosConta = c.dispositivos.versoesDeAplicativosInstalados.~versoes
+  --O conjunto dos aplicativos instalados nos dispositivos esta contido no
+  --conjunto dos aplicativos da conta, isso por causa que alguns aplicativos
+  --contidos na conta ja podem ter sido desinstalados.
+  all c:Conta | c.dispositivos.versoesDeAplicativosInstalados.~versoes in c.aplicativosConta
 }
 
 
