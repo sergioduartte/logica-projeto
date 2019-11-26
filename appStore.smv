@@ -1,5 +1,18 @@
 MODULE main
 VAR
-  test : boolean;
+  appStore : process AppStore;
 ASSIGN
-  init(test) := FALSE;
+
+MODULE AppStore
+VAR
+  usuarios : process Usuario;
+  aplicativos : process Aplicativo;
+ASSIGN
+
+MODULE Usuario
+VAR
+ASSIGN
+
+MODULE Aplicativo
+VAR
+ASSIGN
