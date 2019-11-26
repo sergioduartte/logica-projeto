@@ -1,18 +1,24 @@
+-- main: AppStore FSM
 MODULE main
 VAR
-  appStore : process AppStore;
+  aplicativos : process aplicativoFSM;
+  contas : process contaFSM;
+
+MODULE contaFSM
+VAR
+  containsCreditoSuficiente : {True, False};
+  aplicativos : process aplicativoFSM;
+  dispositivos : process dispositivoFSM;
+ASSIGN
+  init(containsCreditoSuficiente) := True;
+
+MODULE aplicativoFSM
+VAR
+  versao : {v0, v1, v2};
+  isGratuito : {True, False};
 ASSIGN
 
-MODULE AppStore
+MODULE dispositivoFSM
 VAR
-  usuarios : process Usuario;
-  aplicativos : process Aplicativo;
-ASSIGN
-
-MODULE Usuario
-VAR
-ASSIGN
-
-MODULE Aplicativo
-VAR
+  appsVersoesInstaladas : process aplicativoFSM;
 ASSIGN
