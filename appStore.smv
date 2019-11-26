@@ -1,0 +1,5 @@
+MODULE main
+VAR
+  test : boolean;
+ASSIGN
+  init(test) := FALSE;
