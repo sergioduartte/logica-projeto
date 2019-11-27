@@ -24,3 +24,5 @@ Aplicativos podem ser pagos ou gratuitos - caso sejam pagos, o usuário precisa 
 
 ## Links úteis
 * http://disi.unitn.it/~agiordani/fm/L5/main.pdf
+* Simple models in NuSMV: https://www.youtube.com/watch?v=GIrOek9sGyQ
+* Modeling concurrent systems in NuSMV: https://www.youtube.com/watch?v=1vugJ20XucQ
