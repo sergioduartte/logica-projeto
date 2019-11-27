@@ -1,37 +1,29 @@
--- read_model -i <path_to_file.smv>
--- flatten_hierarchy
--- encode_variables
--- build_model
--- print_reachable_states -v
--- pick_state -i
--- simulate -i -k 3
+-- UTILS FOR NUSVM SHELL
+------------------------------------
+-- $ NuSMV -i <path_to_file.smv>
+-- NuSMV > go
+-- NuSMV > print_reachable_states -v
+-- NuSMV > pick_state -i
+-- NuSMV > simulate -i -k 3
+
 
 MODULE main
   VAR
-    usuario: process Usuario;
+    usuario: Usuario;
 
 
 MODULE Usuario
   VAR
-    associarDisp: {True, False};
-    instalarApp: {True, False};
-    atualizarApp: {True, False};
-    removerApp: {True, False};
-    recarregarConta: {True, False};
-
-    conta: process Conta(recarregarConta);
-    aplicativo: process Aplicativo(instalarApp, atualizarApp, removerApp, conta);
-    dispositivo: process Dispositivo(associarDisp, aplicativo);
+    acao: {associarDisp, instalarApp, atualizarApp, removerApp, recarregarConta};
+    conta: process Conta(acao);
+    aplicativo: process Aplicativo(acao, conta);
+    dispositivo: process Dispositivo(acao, aplicativo);
 
   ASSIGN
-    init(associarDisp) := True;
-    init(instalarApp) := False;
-    init(atualizarApp) := False;
-    init(removerApp) := False;
-    init(recarregarConta) := True;
+    init(acao) := associarDisp;
 
 
-MODULE Dispositivo(associar, aplicativo)
+MODULE Dispositivo(acao, aplicativo)
   VAR
     associado: {True, False};
 
@@ -39,12 +31,12 @@ MODULE Dispositivo(associar, aplicativo)
     init(associado) := False;
     next(associado) :=
       case
-        associar=True : {True};
+        acao = associarDisp : {True};
         TRUE: associado;
       esac;
 
 
-MODULE Aplicativo(instalar, atualizar, remover, conta)
+MODULE Aplicativo(acao, conta)
   VAR
     instalado: {True, False};
     atualizado: {True, False};
@@ -59,21 +51,21 @@ MODULE Aplicativo(instalar, atualizar, remover, conta)
 
     next(instalado) :=
       case
-        instalar=True & isPago=False : {True};
-        instalar=True & isPago=True & conta.containsCredito=True : {True};
-        instalar=True & isPago=True & conta.containsCredito=False : {False};
+        acao=instalarApp & isPago=False : {True};
+        acao=instalarApp & isPago=True & conta.containsCredito=True : {True};
+        acao=instalarApp & isPago=True & conta.containsCredito=False : {False};
         TRUE : instalado;
       esac;
 
     next(atualizado) :=
       case
-        atualizar=True & atualizado=False & instalado=True & removido=False : {True};
+        acao=atualizarApp & atualizado=False & instalado=True & removido=False : {True};
         TRUE : atualizado;
       esac;
 
     next(removido) :=
       case
-        remover=True & instalado=True & removido=False : {True};
+        acao=removerApp & instalado=True & removido=False : {True};
         TRUE : removido;
       esac;
 
@@ -85,7 +77,7 @@ MODULE Aplicativo(instalar, atualizar, remover, conta)
       esac;
       
 
-MODULE Conta(recarregar)
+MODULE Conta(acao)
   VAR
     containsCredito: {True, False};
 
@@ -94,6 +86,6 @@ MODULE Conta(recarregar)
 
     next(containsCredito) :=
       case
-        recarregar=True : {True};
+        acao=recarregarConta : {True};
         TRUE: containsCredito;
       esac;
