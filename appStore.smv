@@ -1,66 +1,99 @@
+-- read_model -i <path_to_file.smv>
+-- flatten_hierarchy
+-- encode_variables
+-- build_model
+-- print_reachable_states -v
+-- pick_state -i
+-- simulate -i -k 3
+
 MODULE main
   VAR
-    conta : process Conta;
+    usuario: process Usuario;
 
-MODULE Conta
+
+MODULE Usuario
   VAR
-    containsCreditos : {True, False};
-    applicativo : process Aplicativo(containsCreditos);
-    dispositivo : process Dispositivo(aplicativo);
+    associarDisp: {True, False};
+    instalarApp: {True, False};
+    atualizarApp: {True, False};
+    removerApp: {True, False};
+    recarregarConta: {True, False};
+
+    conta: process Conta(recarregarConta);
+    aplicativo: process Aplicativo(instalarApp, atualizarApp, removerApp, conta);
+    dispositivo: process Dispositivo(associarDisp, aplicativo);
 
   ASSIGN
-    init(cointainsCreditos) := {True};
+    init(associarDisp) := True;
+    init(instalarApp) := False;
+    init(atualizarApp) := False;
+    init(removerApp) := False;
+    init(recarregarConta) := True;
 
 
-MODULE Aplicativo(containsCreditos)
+MODULE Dispositivo(associar, aplicativo)
   VAR
-    instalado : {True, False};
-    isPago : {True, False};
+    associado: {True, False};
 
   ASSIGN
-    init(instalado) := {False};
-    init(isPago) := {False};
+    init(associado) := False;
+    next(associado) :=
+      case
+        associar=True : {True};
+        TRUE: associado;
+      esac;
+
+
+MODULE Aplicativo(instalar, atualizar, remover, conta)
+  VAR
+    instalado: {True, False};
+    atualizado: {True, False};
+    removido: {True, False};
+    isPago: {True, False};
+
+  ASSIGN
+    init(instalado) := False;
+    init(atualizado) := False;
+    init(removido) := False;
+    init(isPago) := True;
 
     next(instalado) :=
       case
-        (isPago = True & cointainsCredito = True): {True}; 
-        (isPago = True & cointainsCredito = False}: {False}; 
-        (isPago = False & cointainsCredito = True}: {True}; 
-        (isPago = False & cointainsCredito = False}: {True}; 
-        TRUE: {False};
+        instalar=True & isPago=False : {True};
+        instalar=True & isPago=True & conta.containsCredito=True : {True};
+        instalar=True & isPago=True & conta.containsCredito=False : {False};
+        TRUE : instalado;
       esac;
 
-MODULE Dispositivo(aplicativo)
+    next(atualizado) :=
+      case
+        atualizar=True & atualizado=False & instalado=True & removido=False : {True};
+        TRUE : atualizado;
+      esac;
+
+    next(removido) :=
+      case
+        remover=True & instalado=True & removido=False : {True};
+        TRUE : removido;
+      esac;
+
+    next(isPago) :=
+      case
+        isPago=True : {False};
+        isPago=False : {True};
+        TRUE: isPago;
+      esac;
+      
+
+MODULE Conta(recarregar)
   VAR
-    isAtualizado : {True, False};
-    instalarAplicativo: process instalarAplicativo(appsInstalados);
-    desinstalarAplicativo: process desinstalarAplicativo(appsInstalados);
+    containsCredito: {True, False};
+
   ASSIGN
-    init(isAtualizado) := False;
+    init(containsCredito) := False;
 
-MODULE atualizarAplicativo(isAtualizado)
-VAR
-ASSIGN
-	next(isAtualizado) :=
-	case
-		isAtualizado = False: True;
-		TRUE: isAtualizado;
-	esac;
-
-MODULE instalarAplicativo(qtdApps)
-VAR
-ASSIGN
-	next(qtdApps) :=
-	case
-		qtdApps < 10: qtdApps + 1;
-		TRUE: qtdApps;
-	esac;
-
-MODULE desinstalarAplicativo(qtdApps)
-VAR
-ASSIGN
-	next(qtdApps) :=
-	case
-		qtdApps > 0: qtdApps - 1;
-		TRUE: qtdApps;
-	esac;
+    next(containsCredito) :=
+      case
+        recarregar=True : {True};
+        TRUE: containsCredito;
+      esac;
