@@ -17,22 +17,37 @@ MODULE Usuario
     acao: {associarDisp, instalarApp, atualizarApp, removerApp, recarregarConta};
     conta: process Conta(acao);
     aplicativo: process Aplicativo(acao, conta);
-    dispositivo: process Dispositivo(acao, aplicativo);
+    dispositivo: process Dispositivo(acao);
 
   ASSIGN
     init(acao) := associarDisp;
 
+  LTLSPEC G(aplicativo.instalado = False) -> X (aplicativo.removido = False);
+  LTLSPEC G(aplicativo.atualizado = True) -> X (aplicativo.instalado = True);
+  LTLSPEC G(aplicativo.removido = True) -> X (aplicativo.instalado = False);
+  LTLSPEC G(conta.containsCredito = False & aplicativo.isPago = False) -> F dispositivo.appInstalado = True;
+  LTLSPEC G(conta.containsCredito = False & aplicativo.isPago = True) -> F dispositivo.appInstalado = False;
 
-MODULE Dispositivo(acao, aplicativo)
+
+MODULE Dispositivo(acao)
   VAR
     associado: {True, False};
+    appInstalado: {True, False};
 
   ASSIGN
     init(associado) := False;
+    init(appInstalado) := False;
+
     next(associado) :=
       case
         acao = associarDisp : {True};
         TRUE: associado;
+      esac;
+
+    next(appInstalado) :=
+      case
+        acao = instalarApp : {True};
+        TRUE: appInstalado;
       esac;
 
 
@@ -89,3 +104,5 @@ MODULE Conta(acao)
         acao=recarregarConta : {True};
         TRUE: containsCredito;
       esac;
+
+  LTLSPEC G(aplicativo.instalado = False) -> X (aplicativo.removido = False);
