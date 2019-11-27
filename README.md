@@ -20,7 +20,7 @@ Aplicativos podem ser pagos ou gratuitos - caso sejam pagos, o usuário precisa 
     - Caso um **Aplicativo** seja pago, o **Usuário** precisa usar seus créditos na conta
     - Caso um **Usuário** não tenha créditos na **Conta**, ele precisa fazer uma recarga
 
-- Um ou mais **Dispositivos** podem ser associados a uma conta
+- Um ou mais **Dispositivos** podem ser associados a um usuário
 
 ## Links úteis
 * http://disi.unitn.it/~agiordani/fm/L5/main.pdf
