@@ -104,5 +104,3 @@ MODULE Conta(acao)
         acao=recarregarConta : {True};
         TRUE: containsCredito;
       esac;
-
-  LTLSPEC G(aplicativo.instalado = False) -> X (aplicativo.removido = False);
