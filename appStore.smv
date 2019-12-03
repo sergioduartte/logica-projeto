@@ -22,10 +22,19 @@ MODULE Usuario
   ASSIGN
     init(acao) := associarDisp;
 
+  -- Todos os estados em que o aplicativo não está instalado significam que o aplicativo não foi removido
   LTLSPEC G(aplicativo.instalado = False) -> X (aplicativo.removido = False);
+  
+  -- Todos os estados em que o aplicativo está atualizado implicam no aplicativo estar instalado
   LTLSPEC G(aplicativo.atualizado = True) -> X (aplicativo.instalado = True);
+  
+  -- Todos os estados em que o aplicativo está removido implicam no aplicativo não estar instalado
   LTLSPEC G(aplicativo.removido = True) -> X (aplicativo.instalado = False);
+  
+  -- O aplicativo pode estar instalado caso o aplicativo não seja pago e a conta não tenha crédito
   LTLSPEC G(conta.containsCredito = False & aplicativo.isPago = False) -> F dispositivo.appInstalado = True;
+  
+  -- O aplicativo não pode estar instalado caso o aplicativo seja pago e a conta não tenha crédito
   LTLSPEC G(conta.containsCredito = False & aplicativo.isPago = True) -> F dispositivo.appInstalado = False;
 
 
